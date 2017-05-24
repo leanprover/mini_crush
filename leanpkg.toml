@@ -1,0 +1,6 @@
+[package]
+name = "mini_crush"
+version = "0.1"
+path = "src"
+
+[dependencies]
