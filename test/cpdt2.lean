@@ -1,7 +1,7 @@
 /-
 CPDT Chapter 2, Introducing Inductive Types
 -/
-import tools.mini_crush
+import mini_crush
 universe variable u
 
 export nat (succ)

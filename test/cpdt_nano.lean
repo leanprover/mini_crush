@@ -1,4 +1,4 @@
-import tools.mini_crush.nano_crush
+import mini_crush.nano_crush
 /- "Proving in the Large" chapter of CPDT -/
 
 inductive exp : Type

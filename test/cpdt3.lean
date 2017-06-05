@@ -1,4 +1,4 @@
-import tools.mini_crush
+import mini_crush
 /-
 This corresponds to Chapter 2 of CPDT, Some Quick Examples
 -/
