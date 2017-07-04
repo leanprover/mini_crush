@@ -120,8 +120,11 @@ meta def close (hs : hinst_lemmas) (s : name) (e : option expr) : tactic unit :=
 <|> close_aux hs
 <|> report_failure s e >> failed
 
+meta def simph_intros (s : simp_lemmas) (cfg : simp_config) :=
+simp_intros s [] [] {to_simp_config := cfg, use_hyps := tt}
+
 meta def simple (s : simp_lemmas) (hs : hinst_lemmas) (cfg : simp_config) (s_name : name) (h : option expr) : tactic unit :=
-simph_intros_using s cfg >> close hs s_name h
+simph_intros s cfg >> close hs s_name h
 
 /- Best first search -/
 
@@ -174,7 +177,7 @@ meta def try_cases (s : simp_lemmas) (hs : hinst_lemmas) (cfg : simp_config) (s_
 do es ← collect_inductive_from_target,
    rs ← try_all (λ e, do
      when_tracing `mini_crush (do p ← pp e, trace (to_fmt "Splitting on '" ++ p ++ to_fmt "'")),
-     cases e; simph_intros_using s cfg; try (close_aux hs)) es,
+     cases e; simph_intros s cfg; try (close_aux hs)) es,
    rs ← return $ flip list.qsort rs (λ ⟨e₁, _, n₁, _⟩ ⟨e₂, _, n₂, _⟩, if n₁ ≠ n₂ then n₁ < n₂ else size e₁ < size e₂),
    return $ rs.map (λ ⟨_, _, _, s⟩, ((), s))
 
@@ -205,7 +208,7 @@ do s  ← mk_simp_lemmas s,
 
 meta def strategy_2_aux (cfg : simp_config) (hs : hinst_lemmas) : simp_lemmas → tactic unit
 | s :=
-  do s ← simp_intro_aux cfg tt s tt [`_], -- Introduce next hypothesis
+  do s ← simp_intros_aux cfg tt [] s tt [`_],
      h ← list.ilast <$> local_context,
      try $ solve1 (mwhen (is_inductive h) $ induction' h; simple s hs cfg "strategy 2" (some h)),
      done <|> strategy_2_aux s
@@ -218,7 +221,7 @@ do s ← mk_simp_lemmas s,
 meta def strategy_3 (cfg : simp_config := {}) (max_depth : nat := 1) (s : option simp_lemmas := none) (hs : option hinst_lemmas := none) : tactic unit :=
 do s ← mk_simp_lemmas s,
    hs ← mk_hinst_lemmas hs,
-   try_induction (λ h, try (simph_intros_using s cfg); try (close_aux hs); (done <|> search_cases max_depth s hs cfg "strategy 3"))
+   try_induction (λ h, try (simph_intros s cfg); try (close_aux hs); (done <|> search_cases max_depth s hs cfg "strategy 3"))
 
 end mini_crush
 
