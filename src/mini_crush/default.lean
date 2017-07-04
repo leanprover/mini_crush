@@ -121,7 +121,9 @@ meta def close (hs : hinst_lemmas) (s : name) (e : option expr) : tactic unit :=
 <|> report_failure s e >> failed
 
 meta def simph_intros (s : simp_lemmas) (cfg : simp_config) :=
-simp_intros s [] [] {to_simp_config := cfg, use_hyps := tt}
+do ctx ← collect_ctx_simps,
+   s   ← s.append ctx,
+   simp_intros s [] [] {to_simp_config := cfg, use_hyps := tt}
 
 meta def simple (s : simp_lemmas) (hs : hinst_lemmas) (cfg : simp_config) (s_name : name) (h : option expr) : tactic unit :=
 simph_intros s cfg >> close hs s_name h
