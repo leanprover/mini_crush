@@ -91,7 +91,7 @@ inductive formula : Type
 
 open formula
 
-example forall_refl : formula := Forall (λ x, Eq x x)
+example : formula := Forall (λ x, Eq x x)
 
 def formula_denote : formula → Prop
 | (Eq n1 n2)  := n1 = n2
