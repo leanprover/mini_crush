@@ -179,7 +179,7 @@ meta def try_cases (s : simp_lemmas) (hs : hinst_lemmas) (cfg : simp_config) (s_
 do es ← collect_inductive_from_target,
    rs ← try_all (λ e, do
      when_tracing `mini_crush (do p ← pp e, trace (to_fmt "Splitting on '" ++ p ++ to_fmt "'")),
-     cases e; simph_intros s cfg; try (close_aux hs)) es,
+     cases e >> skip; simph_intros s cfg; try (close_aux hs)) es,
    rs ← return $ flip list.qsort rs (λ ⟨e₁, _, n₁, _⟩ ⟨e₂, _, n₂, _⟩, if n₁ ≠ n₂ then n₁ < n₂ else size e₁ < size e₂),
    return $ rs.map (λ ⟨_, _, _, s⟩, ((), s))
 

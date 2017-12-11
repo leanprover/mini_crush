@@ -99,7 +99,7 @@ meta def induct (tac : tactic unit) : tactic unit :=
 collect_inductive_hyps >>= try_list (λ e, induction' e; tac)
 
 meta def split (tac : tactic unit) : tactic unit :=
-collect_inductive_from_target >>= try_list (λ e, cases e; tac)
+collect_inductive_from_target >>= try_list (λ e, cases e >> skip; tac)
 
 meta def search (tac : tactic unit) : nat → tactic unit
 | 0     := all_goals tac >> done
